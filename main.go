@@ -46,7 +46,8 @@ Options:
 
 	files, err := diffcopy.FindWaitingFiles(srcDir, destDir)
 	if err != nil {
-		return
+		fmt.Fprintf(os.Stderr, "%s", err)
+		os.Exit(1)
 	}
 
 	bar := pb.StartNew(len(files))
