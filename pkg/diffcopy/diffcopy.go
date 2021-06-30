@@ -1,6 +1,7 @@
 package diffcopy
 
 import (
+	"io"
 	"os"
 	"path/filepath"
 )
@@ -37,4 +38,30 @@ func FindWaitingFiles(srcDir string, destDir string) ([]string, error) {
 	}
 
 	return list, nil
+}
+
+func CopyFile(srcPath string, destPath string) error {
+	// ディレクトリが存在しない場合は作成
+	if _, err := os.Stat(filepath.Dir(destPath)); err != nil {
+		os.MkdirAll(filepath.Dir(destPath), 0777)
+	}
+
+	src, err := os.Open(srcPath)
+	if err != nil {
+		return err
+	}
+	defer src.Close()
+
+	dest, err := os.Create(destPath)
+	if err != nil {
+		return err
+	}
+	defer dest.Close()
+
+	_, err = io.Copy(dest, src)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
